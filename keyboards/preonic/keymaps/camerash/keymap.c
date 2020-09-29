@@ -119,22 +119,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
-
 // Lighting layers
 const rgblight_segment_t PROGMEM base_layer[] = RGBLIGHT_LAYER_SEGMENTS(
-    {6, 4, HSV_RED},       // Light 4 LEDs, starting with LED 6
-    {12, 4, HSV_RED}       // Light 4 LEDs, starting with LED 12
+    {0, 8, HSV_PURPLE}       // Light 8 LEDs, starting with LED 0
 );
 const rgblight_segment_t PROGMEM lower_layer[] = RGBLIGHT_LAYER_SEGMENTS(
-    {11, 2, HSV_PURPLE}
+    {0, 8, HSV_BLUE}
 );
 const rgblight_segment_t PROGMEM raise_layer[] = RGBLIGHT_LAYER_SEGMENTS(
-    {9, 2, HSV_CYAN}
+    {0, 8, HSV_RED}
+);
+const rgblight_segment_t PROGMEM adjust_layer[] = RGBLIGHT_LAYER_SEGMENTS(
+    {0, 8, HSV_CYAN}
 );
 const rgblight_segment_t* const PROGMEM my_rgb_layers[] = RGBLIGHT_LAYERS_LIST(
     base_layer,
     lower_layer,
-    raise_layer
+    raise_layer,
+    adjust_layer
 );
 void keyboard_post_init_user(void) {
     // Enable the LED layers
@@ -273,13 +275,9 @@ bool music_mask_user(uint16_t keycode) {
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    // Both layers will light up if both kb layers are active
-    rgblight_set_layer_state(1, layer_state_cmp(state, 1));
-    rgblight_set_layer_state(2, layer_state_cmp(state, 2));
-    return state;
-}
-
-bool led_update_user(led_t led_state) {
-    rgblight_set_layer_state(0, led_state.caps_lock);
-    return true;
+  rgblight_set_layer_state(0, layer_state_cmp(state, _BASE));
+  rgblight_set_layer_state(1, layer_state_cmp(state, _LOWER));
+  rgblight_set_layer_state(2, layer_state_cmp(state, _RAISE));
+  rgblight_set_layer_state(3, layer_state_cmp(state, _ADJUST));
+  return state;
 }
